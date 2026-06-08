@@ -6,2046 +6,1367 @@
 <title>Five Deep</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface2: #1a1a1a;
-    --border: #2a2a2a;
-    --text: #f0f0f0;
-    --text-muted: #666;
-    --text-dim: #444;
-    --green: #00e676;
-    --green-bg: #00e67615;
-    --yellow: #ffd600;
-    --yellow-bg: #ffd60015;
-    --red: #ff1744;
-    --red-bg: #ff174410;
-    --accent: #ff6b35;
-    --accent2: #00e676;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ── NOISE TEXTURE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* ── COURT LINE DECORATION ── */
-  body::after {
-    content: '';
-    position: fixed;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 1px;
-    height: 100vh;
-    background: linear-gradient(to bottom, transparent, var(--border) 20%, var(--border) 80%, transparent);
-    pointer-events: none;
-    opacity: 0.3;
-  }
-
-  /* ── HEADER ── */
-  header {
-    position: relative;
-    padding: 28px 24px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    z-index: 10;
-  }
-
-  .logo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    text-transform: uppercase;
-    color: var(--text);
-  }
-
-  .logo span {
-    color: var(--accent);
-  }
-
-  .header-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .btn-icon {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    transition: all 0.15s;
-  }
-
-  .btn-icon:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* ── MAIN CONTAINER ── */
-  .container {
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 0 16px;
-  }
-
-  /* ── MODE SELECT SCREEN ── */
-  #screen-mode {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 80px);
-    gap: 48px;
-    padding: 40px 24px;
-  }
-
-  .mode-hero {
-    text-align: center;
-  }
-
-  .mode-hero h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: clamp(48px, 12vw, 96px);
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -3px;
-    line-height: 0.9;
-    color: var(--text);
-  }
-
-  .mode-hero h1 em {
-    font-style: normal;
-    color: var(--accent);
-    display: block;
-  }
-
-  .mode-hero p {
-    margin-top: 16px;
-    color: var(--text-muted);
-    font-size: 15px;
-    max-width: 340px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.5;
-  }
-
-  .mode-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    width: 100%;
-    max-width: 480px;
-  }
-
-  .mode-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .mode-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .mode-card.daily::before { background: radial-gradient(circle at 50% 0%, #ff6b3520 0%, transparent 70%); }
-  .mode-card.infinite::before { background: radial-gradient(circle at 50% 0%, #00e67620 0%, transparent 70%); }
-
-  .mode-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-  }
-
-  .mode-card.infinite:hover { border-color: var(--accent2); }
-
-  .mode-card:hover::before { opacity: 1; }
-
-  .mode-card-icon {
-    font-size: 36px;
-    margin-bottom: 12px;
-  }
-
-  .mode-card-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .mode-card-desc {
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.4;
-  }
-
-  .mode-card.daily .mode-card-title { color: var(--accent); }
-  .mode-card.infinite .mode-card-title { color: var(--accent2); }
-
-  /* ── DECADE PICKER ── */
-  #screen-decade {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    min-height: calc(100vh - 80px);
-    padding: 48px 24px;
-    gap: 32px;
-  }
-
-  .screen-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-    text-align: center;
-  }
-
-  .decade-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .decade-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 8px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--text-muted);
-    text-transform: uppercase;
-  }
-
-  .decade-btn:hover, .decade-btn.selected {
-    border-color: var(--accent2);
-    color: var(--accent2);
-    background: var(--green-bg);
-  }
-
-  .decade-btn .decade-years {
-    display: block;
-    font-size: 10px;
-    font-family: 'Barlow', sans-serif;
-    font-weight: 400;
-    color: var(--text-dim);
-    margin-top: 4px;
-    letter-spacing: 0.5px;
-  }
-
-  .btn-back {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    transition: all 0.15s;
-  }
-
-  .btn-back:hover { border-color: var(--text-muted); color: var(--text); }
-
-  /* ── GAME SCREEN ── */
-  #screen-game {
-    display: none;
-    padding: 24px 0 48px;
-  }
-
-  /* ── TEAM HEADER ── */
-  .team-header {
-    padding: 20px 24px 24px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .team-logo-wrap {
-    width: 64px;
-    height: 64px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .team-logo-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  .team-info {}
-
-  .team-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 4px;
-  }
-
-  .team-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 28px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -0.5px;
-    line-height: 1;
-    color: var(--text);
-  }
-
-  .team-season {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--accent);
-    margin-top: 2px;
-  }
-
-  .mode-badge {
-    margin-left: auto;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 5px 10px;
-    border-radius: 6px;
-    flex-shrink: 0;
-  }
-
-  .mode-badge.daily { background: #ff6b3520; color: var(--accent); border: 1px solid #ff6b3540; }
-  .mode-badge.infinite { background: var(--green-bg); color: var(--accent2); border: 1px solid #00e67640; }
-
-  /* ── GUESS COUNT ── */
-  .guess-count {
-    text-align: center;
-    padding: 0 24px 20px;
-  }
-
-  .guess-count-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 48px;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--text);
-  }
-
-  .guess-count-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-top: 2px;
-  }
-
-  /* ── PLAYER SLOTS ── */
-  .slots {
-    padding: 0 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 28px;
-  }
-
-  .slot {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-height: 68px;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .slot::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    border-radius: 12px 0 0 12px;
-    background: var(--border);
-    transition: background 0.3s;
-  }
-
-  .slot.correct { border-color: var(--green); background: var(--green-bg); }
-  .slot.correct::before { background: var(--green); }
-  .slot.revealed { border-color: var(--border); background: var(--surface2); }
-  .slot.revealed::before { background: var(--text-dim); }
-
-  .slot-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-dim);
-    width: 16px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .slot-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-dim);
-    font-size: 18px;
-  }
-
-  .slot-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-  }
-
-  .slot-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .slot-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .slot-status {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-top: 1px;
-  }
-
-  .slot.correct .slot-status { color: var(--green); }
-  .slot.revealed .slot-status { color: var(--text-dim); }
-  .slot:not(.correct):not(.revealed) .slot-status { color: var(--text-dim); }
-
-  .slot-check {
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  /* ── BENCH ── */
-  .bench-section {
-    padding: 0 24px;
-    margin-bottom: 28px;
-  }
-
-  .bench-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .bench-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .bench-players {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .bench-chip {
-    background: var(--yellow-bg);
-    border: 1px solid #ffd60030;
-    border-radius: 8px;
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    animation: chipIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes chipIn {
-    from { opacity: 0; transform: scale(0.8) translateY(4px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  .bench-chip-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--surface2);
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .bench-chip-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-  }
-
-  .bench-chip-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--yellow);
-  }
-
-  /* ── WRONG GUESSES ── */
-  .wrong-section {
-    padding: 0 24px;
-    margin-bottom: 28px;
-  }
-
-  .wrong-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .wrong-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .wrong-players {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .wrong-chip {
-    background: var(--red-bg);
-    border: 1px solid #ff174420;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: #ff5555;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    animation: chipIn 0.2s ease;
-  }
-
-  /* ── INPUT AREA ── */
-  .input-area {
-    padding: 0 24px;
-    position: relative;
-  }
-
-  .input-wrap {
-    position: relative;
-  }
-
-  .guess-input {
-    width: 100%;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 48px 14px 16px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 16px;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .guess-input:focus {
-    border-color: var(--accent);
-  }
-
-  .guess-input::placeholder { color: var(--text-dim); }
-
-  .input-icon {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-dim);
-    font-size: 18px;
-    pointer-events: none;
-  }
-
-  /* ── AUTOCOMPLETE ── */
-  .autocomplete {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 24px;
-    right: 24px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    z-index: 100;
-    max-height: 240px;
-    overflow-y: auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-  }
-
-  .autocomplete:empty { display: none; }
-
-  .autocomplete-item {
-    padding: 12px 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.1s;
-  }
-
-  .autocomplete-item:last-child { border-bottom: none; }
-
-  .autocomplete-item:hover, .autocomplete-item.focused {
-    background: var(--surface);
-  }
-
-  .autocomplete-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--border);
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .autocomplete-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-  }
-
-  .autocomplete-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text);
-  }
-
-  /* ── INFINITE MODE SLOT MACHINE ── */
-  #screen-spinner {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 80px);
-    gap: 32px;
-    padding: 40px 24px;
-  }
-
-  .spinner-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-
-  .slot-machine {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px 40px;
-    text-align: center;
-    min-width: 280px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .slot-machine::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 0%, #00e67610 0%, transparent 60%);
-  }
-
-  .slot-reel {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 42px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    color: var(--text);
-    line-height: 1.1;
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-
-  .slot-reel .reel-team {
-    color: var(--accent2);
-    display: block;
-  }
-
-  .slot-reel .reel-season {
-    color: var(--text-muted);
-    font-size: 24px;
-    display: block;
-  }
-
-  .slot-reel.spinning .reel-team,
-  .slot-reel.spinning .reel-season {
-    animation: reelSpin 0.08s steps(1) infinite;
-  }
-
-  @keyframes reelSpin {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .spin-btn {
-    background: var(--accent2);
-    color: #000;
-    border: none;
-    border-radius: 12px;
-    padding: 16px 40px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .spin-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
-  .spin-btn:active { transform: translateY(0); }
-  .spin-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  /* ── RESULT MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 500;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    backdrop-filter: blur(4px);
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px 28px;
-    max-width: 420px;
-    width: 100%;
-    text-align: center;
-    animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.9) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  .modal-emoji { font-size: 48px; margin-bottom: 12px; }
-
-  .modal-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 32px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -0.5px;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .modal-subtitle {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-    line-height: 1.5;
-  }
-
-  .modal-stat {
-    background: var(--surface2);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-
-  .modal-stat-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 48px;
-    font-weight: 900;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  .modal-stat-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-
-  .modal-lineup {
-    text-align: left;
-    margin-bottom: 20px;
-  }
-
-  .modal-lineup-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-  }
-
-  .modal-player-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .modal-player-row:last-child { border-bottom: none; }
-
-  .modal-player-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--surface2);
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .modal-player-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-  }
-
-  .modal-player-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text);
-    flex: 1;
-  }
-
-  .modal-player-status {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--green);
-  }
-
-  .modal-player-status.missed { color: var(--text-dim); }
-
-  .modal-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .btn-share {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    padding: 14px 24px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.15s;
-    width: 100%;
-  }
-
-  .btn-share:hover { filter: brightness(1.1); }
-
-  .btn-next {
-    background: var(--surface2);
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.15s;
-    width: 100%;
-  }
-
-  .btn-next:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  .kofi-link {
-    display: block;
-    margin-top: 16px;
-    font-size: 12px;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-
-  .kofi-link:hover { color: var(--accent); }
-
-  /* ── INFINITE SUMMARY MODAL ── */
-  .session-score {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .session-score-item {
-    background: var(--surface2);
-    border-radius: 12px;
-    padding: 14px;
-    text-align: center;
-  }
-
-  .session-score-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 36px;
-    font-weight: 900;
-    color: var(--accent2);
-    line-height: 1;
-  }
-
-  .session-score-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-
-  /* ── HOW TO PLAY MODAL ── */
-  .how-to-play h3 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: var(--text);
-    margin-bottom: 16px;
-  }
-
-  .rule-row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    margin-bottom: 14px;
-    text-align: left;
-  }
-
-  .rule-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-    width: 28px;
-    text-align: center;
-  }
-
-  .rule-text {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .rule-text strong { color: var(--text); }
-
-  /* ── DAILY ALREADY PLAYED ── */
-  .already-played {
-    text-align: center;
-    padding: 40px 24px;
-  }
-
-  .already-played h2 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 28px;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .already-played p {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-  }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--text);
-    color: var(--bg);
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    white-space: nowrap;
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* ── INFINITE PROGRESS ── */
-  .infinite-progress {
-    padding: 0 24px 20px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .progress-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--border);
-    transition: background 0.3s;
-  }
-
-  .progress-dot.done { background: var(--accent2); }
-  .progress-dot.current { background: var(--accent); }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--surface); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes correctPop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.03); }
-    100% { transform: scale(1); }
-  }
-
-  .slot.just-correct { animation: correctPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-6px); }
-    40% { transform: translateX(6px); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(4px); }
-  }
-
-  .guess-input.shake { animation: shake 0.4s ease; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 480px) {
-    .mode-cards { grid-template-columns: 1fr; max-width: 280px; }
-    .decade-grid { grid-template-columns: repeat(2, 1fr); }
-    .team-name { font-size: 22px; }
-    .slot-reel { font-size: 32px; }
-  }
+:root {
+  --bg: #0c0c0e;
+  --surface: #141416;
+  --surface2: #1c1c1f;
+  --border: #2a2a30;
+  --border2: #383840;
+  --text: #f2f2f4;
+  --text-muted: #888892;
+  --text-dim: #454550;
+  --green: #22c55e;
+  --green-dim: #22c55e18;
+  --yellow: #f59e0b;
+  --yellow-dim: #f59e0b15;
+  --red: #ef4444;
+  --red-dim: #ef444412;
+  --accent: #6366f1;
+  --accent-bright: #818cf8;
+  --accent-dim: #6366f115;
+  --comp: #f97316;
+  --comp-dim: #f9731615;
+  --inf: #22c55e;
+  --inf-dim: #22c55e15;
+  --daily: #6366f1;
+  --daily-dim: #6366f115;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:.35;
+}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  background:var(--bg);
+}
+.logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;letter-spacing:2px;
+  color:var(--text);cursor:pointer;
+  user-select:none;
+}
+.logo span{color:var(--accent-bright)}
+.header-right{display:flex;gap:8px}
+.hbtn{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text-muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:all .15s;
+}
+.hbtn:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:calc(100vh - 65px)}
+.screen.active{display:flex;flex-direction:column}
+
+/* ── MODE SELECT ── */
+#s-home{
+  align-items:center;justify-content:center;
+  padding:48px 24px;gap:48px;
+}
+.hero{text-align:center}
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(64px,16vw,120px);
+  letter-spacing:4px;line-height:.9;
+  color:var(--text);
+}
+.hero-title span{
+  display:block;color:var(--accent-bright);
+  font-size:clamp(48px,12vw,90px);
+}
+.hero-sub{
+  margin-top:16px;font-size:14px;
+  color:var(--text-muted);line-height:1.6;
+  max-width:300px;margin-inline:auto;
+}
+.mode-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:12px;width:100%;max-width:560px;
+}
+.mode-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;padding:24px 16px;
+  cursor:pointer;text-align:center;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.mode-card::before{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;
+}
+.mode-card.daily::before{background:radial-gradient(circle at 50% 0%,var(--daily-dim),transparent 70%)}
+.mode-card.infinite::before{background:radial-gradient(circle at 50% 0%,var(--inf-dim),transparent 70%)}
+.mode-card.competitive::before{background:radial-gradient(circle at 50% 0%,var(--comp-dim),transparent 70%)}
+.mode-card:hover{transform:translateY(-3px)}
+.mode-card.daily:hover{border-color:var(--daily)}
+.mode-card.infinite:hover{border-color:var(--inf)}
+.mode-card.competitive:hover{border-color:var(--comp)}
+.mode-card:hover::before{opacity:1}
+.mode-icon{font-size:28px;margin-bottom:10px}
+.mode-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;letter-spacing:1px;margin-bottom:6px;
+}
+.mode-card.daily .mode-title{color:var(--daily)}
+.mode-card.infinite .mode-title{color:var(--inf)}
+.mode-card.competitive .mode-title{color:var(--comp)}
+.mode-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
+.kofi-home{
+  font-size:12px;color:var(--text-dim);text-decoration:none;
+  transition:color .15s;
+}
+.kofi-home:hover{color:var(--accent-bright)}
+
+/* ── DECADE PICKER ── */
+#s-decade{
+  align-items:center;justify-content:center;
+  padding:48px 24px;gap:32px;
+}
+.screen-label{
+  font-size:11px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text-dim);
+  text-align:center;
+}
+.decade-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;width:100%;max-width:380px;
+}
+.decade-btn{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:18px 8px;cursor:pointer;
+  text-align:center;transition:all .15s;
+}
+.decade-btn:hover,.decade-btn.sel{
+  border-color:var(--inf);background:var(--inf-dim);
+}
+.competitive-mode .decade-btn:hover,
+.competitive-mode .decade-btn.sel{
+  border-color:var(--comp);background:var(--comp-dim);
+}
+.decade-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:1px;color:var(--text);display:block;
+}
+.decade-range{
+  font-size:10px;color:var(--text-dim);
+  margin-top:3px;display:block;
+}
+.btn-back{
+  background:none;border:1px solid var(--border);
+  color:var(--text-muted);padding:10px 20px;
+  border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:13px;transition:all .15s;
+}
+.btn-back:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── SPINNER ── */
+#s-spinner{
+  align-items:center;justify-content:center;
+  padding:40px 24px;gap:28px;
+}
+.progress-dots{display:flex;gap:8px;align-items:center;justify-content:center}
+.pdot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border);transition:all .3s;
+}
+.pdot.done{background:var(--inf)}
+.pdot.cur{background:var(--comp);transform:scale(1.3)}
+.competitive-mode .pdot.done{background:var(--comp)}
+.slot-machine{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:32px 40px;text-align:center;
+  min-width:280px;max-width:420px;width:100%;
+  position:relative;overflow:hidden;
+}
+.slot-machine::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,var(--inf-dim),transparent 60%);
+}
+.competitive-mode .slot-machine::before{
+  background:radial-gradient(circle at 50% 0%,var(--comp-dim),transparent 60%);
+}
+.reel{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:36px;letter-spacing:1px;line-height:1.1;
+  min-height:90px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;z-index:1;
+}
+.reel-team{color:var(--inf);display:block}
+.competitive-mode .reel-team{color:var(--comp)}
+.reel-season{color:var(--text-muted);font-size:22px;display:block}
+.reel.spinning .reel-team,
+.reel.spinning .reel-season{animation:blink .07s steps(1) infinite}
+@keyframes blink{50%{opacity:.2}}
+.spin-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn-spin{
+  background:var(--inf);color:#000;border:none;
+  border-radius:12px;padding:14px 32px;
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;
+  cursor:pointer;transition:all .15s;
+}
+.competitive-mode .btn-spin{background:var(--comp)}
+.btn-spin:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-spin:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-spin-again{
+  background:var(--surface2);color:var(--text-muted);
+  border:1px solid var(--border);border-radius:12px;
+  padding:14px 24px;font-family:'Bebas Neue',sans-serif;
+  font-size:18px;letter-spacing:1px;cursor:pointer;transition:all .15s;display:none;
+}
+.btn-spin-again:hover{border-color:var(--border2);color:var(--text)}
+.session-info{
+  font-size:12px;color:var(--text-dim);text-align:center;
+}
+.btn-end-session{
+  background:none;border:1px solid var(--border);
+  color:var(--text-muted);padding:8px 16px;
+  border-radius:8px;cursor:pointer;font-size:12px;
+  font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.btn-end-session:hover{border-color:var(--red);color:var(--red)}
+
+/* ── GAME SCREEN ── */
+#s-game{padding-bottom:60px}
+.game-header{
+  padding:16px 20px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;
+}
+.team-logo-wrap{
+  width:52px;height:52px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.team-logo-wrap img{width:100%;height:100%;object-fit:contain}
+.game-team-info{flex:1;min-width:0}
+.game-team-label{
+  font-size:9px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text-dim);margin-bottom:3px;
+}
+.game-team-name{
+  font-family:'Bebas Neue',sans-serif;font-size:24px;
+  letter-spacing:.5px;line-height:1;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.game-team-season{
+  font-family:'Bebas Neue',sans-serif;font-size:16px;
+  color:var(--accent-bright);margin-top:1px;
+}
+.mode-pill{
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;padding:4px 10px;border-radius:20px;
+  flex-shrink:0;
+}
+.mode-pill.daily{background:var(--daily-dim);color:var(--daily);border:1px solid #6366f130}
+.mode-pill.infinite{background:var(--inf-dim);color:var(--inf);border:1px solid #22c55e30}
+.mode-pill.competitive{background:var(--comp-dim);color:var(--comp);border:1px solid #f9731630}
+
+/* strikes */
+.strikes-bar{
+  display:flex;gap:8px;align-items:center;
+  padding:12px 20px;border-bottom:1px solid var(--border);
+}
+.strike-label{
+  font-size:10px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text-dim);margin-right:4px;
+}
+.strike{font-size:20px;transition:all .3s}
+.strike.hit{animation:strikeIn .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes strikeIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+
+/* guess counter */
+.guess-bar{
+  display:flex;align-items:baseline;gap:6px;
+  padding:14px 20px 0;
+}
+.guess-num{
+  font-family:'Bebas Neue',sans-serif;font-size:48px;
+  line-height:1;color:var(--text);
+}
+.guess-label{
+  font-size:11px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text-dim);
+}
+
+/* slots */
+.slots{padding:16px 20px;display:flex;flex-direction:column;gap:8px}
+.slot{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;
+  min-height:64px;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.slot::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;border-radius:12px 0 0 12px;
+  background:var(--border);transition:background .3s;
+}
+.slot.correct{border-color:var(--green);background:var(--green-dim)}
+.slot.correct::before{background:var(--green)}
+.slot.revealed{border-color:var(--border2);background:var(--surface2)}
+.slot.correct.pop{animation:slotPop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes slotPop{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+.slot-num{
+  font-family:'Bebas Neue',sans-serif;font-size:14px;
+  color:var(--text-dim);width:14px;text-align:center;flex-shrink:0;
+}
+.slot-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border);
+  overflow:hidden;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-dim);font-size:16px;
+}
+.slot-avatar img{width:100%;height:100%;object-fit:cover;object-position:top}
+.slot-body{flex:1;min-width:0}
+.slot-name{
+  font-family:'Bebas Neue',sans-serif;font-size:19px;
+  letter-spacing:.5px;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.slot-meta{display:flex;gap:6px;align-items:center;margin-top:2px}
+.slot-status{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.slot.correct .slot-status{color:var(--green)}
+.slot.revealed .slot-status{color:var(--text-dim)}
+.slot:not(.correct):not(.revealed) .slot-status{color:var(--text-dim)}
+.pos-badge{
+  font-size:9px;font-weight:700;letter-spacing:1px;
+  padding:2px 6px;border-radius:4px;
+  background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);
+}
+.slot.correct .pos-badge{background:var(--green-dim);color:var(--green);border-color:#22c55e30}
+.slot-check{font-size:16px;flex-shrink:0}
+
+/* bench */
+.bench-wrap,.wrong-wrap{padding:0 20px 16px}
+.section-label{
+  font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text-dim);
+  margin-bottom:8px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.bench-chip{
+  background:var(--yellow-dim);border:1px solid #f59e0b25;
+  border-radius:8px;padding:5px 10px;
+  display:flex;align-items:center;gap:7px;
+  animation:chipIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes chipIn{from{opacity:0;transform:scale(.8) translateY(4px)}to{opacity:1;transform:none}}
+.chip-avatar{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--surface2);overflow:hidden;flex-shrink:0;
+}
+.chip-avatar img{width:100%;height:100%;object-fit:cover;object-position:top}
+.bench-chip-name{
+  font-family:'Bebas Neue',sans-serif;font-size:13px;
+  letter-spacing:.5px;color:var(--yellow);
+}
+.wrong-chip{
+  background:var(--red-dim);border:1px solid #ef444425;
+  border-radius:6px;padding:4px 9px;
+  font-size:12px;font-weight:500;color:#f87171;
+  animation:chipIn .2s ease;
+}
+
+/* input */
+.input-wrap{padding:0 20px;position:relative}
+.guess-input{
+  width:100%;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;
+  padding:13px 44px 13px 14px;
+  font-family:'DM Sans',sans-serif;font-size:15px;
+  color:var(--text);outline:none;transition:border-color .15s;
+}
+.guess-input:focus{border-color:var(--accent)}
+.guess-input::placeholder{color:var(--text-dim)}
+.input-icon{
+  position:absolute;right:34px;top:50%;transform:translateY(-50%);
+  color:var(--text-dim);font-size:16px;pointer-events:none;
+}
+.guess-input.shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.autocomplete{
+  position:absolute;top:calc(100% + 4px);left:20px;right:20px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;z-index:200;
+  max-height:220px;overflow-y:auto;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.ac-item{
+  padding:10px 14px;cursor:pointer;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);transition:background .1s;
+}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover,.ac-item.foc{background:var(--surface)}
+.ac-avatar{width:30px;height:30px;border-radius:50%;background:var(--border);overflow:hidden;flex-shrink:0}
+.ac-avatar img{width:100%;height:100%;object-fit:cover;object-position:top}
+.ac-name{
+  font-family:'Bebas Neue',sans-serif;font-size:15px;
+  letter-spacing:.5px;color:var(--text);
+}
+
+/* ── MODALS ── */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.82);z-index:500;
+  align-items:center;justify-content:center;
+  padding:24px;backdrop-filter:blur(6px);
+}
+.overlay.open{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:28px 24px;
+  max-width:400px;width:100%;text-align:center;
+  animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);
+  max-height:90vh;overflow-y:auto;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:none}}
+.modal-emoji{font-size:44px;margin-bottom:10px}
+.modal-title{
+  font-family:'Bebas Neue',sans-serif;font-size:30px;
+  letter-spacing:1px;color:var(--text);margin-bottom:6px;
+}
+.modal-sub{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:20px}
+.stat-box{
+  background:var(--surface2);border-radius:12px;
+  padding:14px;margin-bottom:14px;
+}
+.stat-num{
+  font-family:'Bebas Neue',sans-serif;font-size:48px;
+  line-height:1;color:var(--accent-bright);
+}
+.stat-label{
+  font-size:10px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text-dim);margin-top:3px;
+}
+.lineup-breakdown{text-align:left;margin-bottom:18px}
+.breakdown-label{
+  font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;
+}
+.breakdown-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 0;border-bottom:1px solid var(--border);
+}
+.breakdown-row:last-child{border:none}
+.breakdown-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--surface2);overflow:hidden;flex-shrink:0;
+}
+.breakdown-avatar img{width:100%;height:100%;object-fit:cover;object-position:top}
+.breakdown-name{
+  font-family:'Bebas Neue',sans-serif;font-size:16px;
+  letter-spacing:.5px;color:var(--text);flex:1;
+}
+.breakdown-status{font-size:11px;font-weight:600}
+.breakdown-status.hit{color:var(--green)}
+.breakdown-status.miss{color:var(--text-dim)}
+.modal-actions{display:flex;flex-direction:column;gap:8px}
+.btn-primary{
+  background:var(--accent);color:#fff;border:none;
+  border-radius:12px;padding:13px 20px;
+  font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;
+  cursor:pointer;width:100%;transition:all .15s;
+}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-secondary{
+  background:var(--surface2);color:var(--text-muted);
+  border:1px solid var(--border);border-radius:12px;
+  padding:11px 20px;font-family:'Bebas Neue',sans-serif;
+  font-size:16px;letter-spacing:1px;cursor:pointer;
+  width:100%;transition:all .15s;
+}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.modal-kofi{
+  display:block;margin-top:14px;font-size:11px;
+  color:var(--text-dim);text-decoration:none;transition:color .15s;
+}
+.modal-kofi:hover{color:var(--accent-bright)}
+
+/* session summary grid */
+.session-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;
+}
+.session-stat{
+  background:var(--surface2);border-radius:10px;padding:12px;
+}
+.session-stat-num{
+  font-family:'Bebas Neue',sans-serif;font-size:32px;
+  line-height:1;color:var(--inf);
+}
+.competitive-session .session-stat-num{color:var(--comp)}
+.session-stat-label{
+  font-size:9px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text-dim);margin-top:3px;
+}
+.session-team-row{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 0;border-bottom:1px solid var(--border);
+  text-align:left;
+}
+.session-team-row:last-child{border:none}
+.session-team-name{
+  font-size:12px;color:var(--text-muted);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.session-team-score{
+  font-family:'Bebas Neue',sans-serif;font-size:14px;
+  letter-spacing:.5px;color:var(--text);flex-shrink:0;
+}
+
+/* how to play */
+.rule{display:flex;gap:12px;margin-bottom:14px;text-align:left}
+.rule-icon{font-size:18px;flex-shrink:0;width:24px;text-align:center;margin-top:1px}
+.rule-text{font-size:13px;color:var(--text-muted);line-height:1.5}
+.rule-text strong{color:var(--text)}
+
+/* toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--text);color:var(--bg);
+  padding:10px 18px;border-radius:10px;
+  font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;
+  z-index:9000;transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+@media(max-width:480px){
+  .mode-grid{grid-template-columns:1fr}
+  .decade-grid{grid-template-columns:repeat(2,1fr)}
+  .game-team-name{font-size:20px}
+}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-  <div class="logo">Five<span>Deep</span></div>
-  <div class="header-actions">
-    <button class="btn-icon" id="btn-how" title="How to play">?</button>
+  <div class="logo" id="logo-home">Five<span>Deep</span></div>
+  <div class="header-right">
+    <button class="hbtn" id="btn-home-header" title="Home">⌂</button>
+    <button class="hbtn" id="btn-how" title="How to play">?</button>
   </div>
 </header>
 
-<!-- MODE SELECT -->
-<div id="screen-mode">
-  <div class="mode-hero">
-    <h1>Name The<em>Starting Five</em></h1>
-    <p>Given an NBA team and season, can you name their most-used starting lineup?</p>
+<!-- HOME -->
+<div class="screen active" id="s-home">
+  <div class="hero">
+    <div class="hero-title">Name The<span>Starting Five</span></div>
+    <div class="hero-sub">Given an NBA team and season, name their most-used starting lineup.</div>
   </div>
-  <div class="mode-cards">
+  <div class="mode-grid">
     <div class="mode-card daily" id="btn-daily">
-      <div class="mode-card-icon">📅</div>
-      <div class="mode-card-title">Daily</div>
-      <div class="mode-card-desc">One puzzle per day, same for everyone</div>
+      <div class="mode-icon">📅</div>
+      <div class="mode-title">Daily</div>
+      <div class="mode-desc">One puzzle a day, same for everyone</div>
     </div>
     <div class="mode-card infinite" id="btn-infinite">
-      <div class="mode-card-icon">♾️</div>
-      <div class="mode-card-title">Infinite</div>
-      <div class="mode-card-desc">Spin through as many as you want</div>
+      <div class="mode-icon">♾️</div>
+      <div class="mode-title">Infinite</div>
+      <div class="mode-desc">Endless puzzles, end whenever you want</div>
+    </div>
+    <div class="mode-card competitive" id="btn-competitive">
+      <div class="mode-icon">🏆</div>
+      <div class="mode-title">Compete</div>
+      <div class="mode-desc">3 strikes per team, track your accuracy</div>
     </div>
   </div>
-  <a href="https://ko-fi.com/noahbair" target="_blank" class="kofi-link">☕ Support Five Deep on Ko-fi</a>
+  <a href="https://ko-fi.com/noahbair" target="_blank" class="kofi-home">☕ Support Five Deep on Ko-fi</a>
 </div>
 
-<!-- DECADE PICKER (infinite only) -->
-<div id="screen-decade" style="display:none;">
-  <div class="container" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:32px;">
-    <div class="screen-title">Choose Your Era</div>
-    <div class="decade-grid">
+<!-- DECADE PICKER -->
+<div class="screen" id="s-decade">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:28px;padding:48px 24px;flex:1;justify-content:center">
+    <div class="screen-label">Choose Your Era</div>
+    <div class="decade-grid" id="decade-grid">
       <div class="decade-btn" data-decade="all">
-        <span>All</span>
-        <span class="decade-years">2010–2026</span>
+        <span class="decade-name">All</span>
+        <span class="decade-range">2010–2026</span>
       </div>
       <div class="decade-btn" data-decade="2010s">
-        <span>2010s</span>
-        <span class="decade-years">2010–2019</span>
+        <span class="decade-name">2010s</span>
+        <span class="decade-range">2010–2019</span>
       </div>
       <div class="decade-btn" data-decade="2020s">
-        <span>2020s</span>
-        <span class="decade-years">2020–2026</span>
+        <span class="decade-name">2020s</span>
+        <span class="decade-range">2020–2026</span>
       </div>
     </div>
     <button class="btn-back" id="btn-back-decade">← Back</button>
   </div>
 </div>
 
-<!-- SLOT MACHINE (infinite spin) -->
-<div id="screen-spinner" style="display:none;">
-  <div class="container" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:32px;">
-    <div class="infinite-progress" id="infinite-progress"></div>
-    <div class="spinner-label">Spin for your next team</div>
+<!-- SPINNER -->
+<div class="screen" id="s-spinner">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:24px;padding:40px 24px;flex:1;justify-content:center">
+    <div class="progress-dots" id="progress-dots" style="display:none"></div>
     <div class="slot-machine">
-      <div class="slot-reel" id="slot-reel">
+      <div class="reel" id="reel">
         <span class="reel-team" id="reel-team">—</span>
         <span class="reel-season" id="reel-season">——</span>
       </div>
     </div>
-    <button class="spin-btn" id="spin-btn">🎰 Spin</button>
-    <button class="btn-back" id="btn-back-spinner">← Back</button>
-  </div>
-</div>
-
-<!-- GAME SCREEN -->
-<div id="screen-game" style="display:none;">
-  <div class="container">
-    <!-- Team header -->
-    <div class="team-header">
-      <div class="team-logo-wrap">
-        <img id="team-logo" src="" alt="" onerror="this.style.display='none'">
-      </div>
-      <div class="team-info">
-        <div class="team-label">Starting Lineup</div>
-        <div class="team-name" id="team-name">—</div>
-        <div class="team-season" id="team-season">—</div>
-      </div>
-      <div class="mode-badge" id="mode-badge">Daily</div>
+    <div class="spin-actions">
+      <button class="btn-spin" id="btn-spin">🎰 Spin</button>
+      <button class="btn-spin-again" id="btn-spin-again">↺ Spin Again</button>
     </div>
-
-    <!-- Guess counter -->
-    <div class="guess-count">
-      <div class="guess-count-num" id="guess-count-num">0</div>
-      <div class="guess-count-label">Total Guesses</div>
-    </div>
-
-    <!-- Player slots -->
-    <div class="slots" id="slots"></div>
-
-    <!-- Bench -->
-    <div class="bench-section" id="bench-section" style="display:none;">
-      <div class="bench-label">On the Bench</div>
-      <div class="bench-players" id="bench-players"></div>
-    </div>
-
-    <!-- Wrong guesses -->
-    <div class="wrong-section" id="wrong-section" style="display:none;">
-      <div class="wrong-label">Not on this Team</div>
-      <div class="wrong-players" id="wrong-players"></div>
-    </div>
-
-    <!-- Input -->
-    <div class="input-area" id="input-area">
-      <div class="input-wrap">
-        <input
-          type="text"
-          class="guess-input"
-          id="guess-input"
-          placeholder="Type a player name..."
-          autocomplete="off"
-          autocorrect="off"
-          spellcheck="false"
-        >
-        <span class="input-icon">🔍</span>
-      </div>
-      <div class="autocomplete" id="autocomplete"></div>
+    <div class="session-info" id="session-info"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-end-session" id="btn-end-session" style="display:none">End Session</button>
+      <button class="btn-back" id="btn-back-spinner">← Back</button>
     </div>
   </div>
 </div>
 
-<!-- HOW TO PLAY MODAL -->
-<div class="modal-overlay" id="modal-how">
-  <div class="modal how-to-play">
-    <h3>How to Play</h3>
-    <div class="rule-row">
-      <div class="rule-icon">🏀</div>
-      <div class="rule-text">You're given an <strong>NBA team and season</strong>. Name their most-used starting 5-man lineup.</div>
+<!-- GAME -->
+<div class="screen" id="s-game">
+  <div class="game-header">
+    <div class="team-logo-wrap">
+      <img id="team-logo" src="" alt="" onerror="this.style.display='none'">
     </div>
-    <div class="rule-row">
-      <div class="rule-icon">🟩</div>
-      <div class="rule-text"><strong>Green</strong> = correct! That player was in the starting lineup.</div>
+    <div class="game-team-info">
+      <div class="game-team-label">Starting Lineup</div>
+      <div class="game-team-name" id="game-team-name">—</div>
+      <div class="game-team-season" id="game-team-season">—</div>
     </div>
-    <div class="rule-row">
-      <div class="rule-icon">🟨</div>
-      <div class="rule-text"><strong>Yellow (Bench)</strong> = that player was on the roster that year but wasn't in the most-used starting five.</div>
-    </div>
-    <div class="rule-row">
-      <div class="rule-icon">❌</div>
-      <div class="rule-text"><strong>Red</strong> = not on the team that year at all.</div>
-    </div>
-    <div class="rule-row">
-      <div class="rule-icon">∞</div>
-      <div class="rule-text">You have <strong>unlimited guesses</strong>. Your total guess count is tracked and shareable.</div>
-    </div>
-    <div class="rule-row">
-      <div class="rule-icon">📅</div>
-      <div class="rule-text">In <strong>Daily mode</strong>, everyone gets the same puzzle. Resets at midnight ET.</div>
-    </div>
-    <div class="modal-actions" style="margin-top:24px;">
-      <button class="btn-next" id="btn-close-how">Got it</button>
-    </div>
-    <a href="https://ko-fi.com/noahbair" target="_blank" class="kofi-link">☕ Support on Ko-fi</a>
+    <div class="mode-pill" id="mode-pill">Daily</div>
+  </div>
+  <div class="strikes-bar" id="strikes-bar" style="display:none">
+    <span class="strike-label">Strikes</span>
+    <span class="strike" id="strike-1">⬜</span>
+    <span class="strike" id="strike-2">⬜</span>
+    <span class="strike" id="strike-3">⬜</span>
+  </div>
+  <div class="guess-bar">
+    <div class="guess-num" id="guess-num">0</div>
+    <div class="guess-label">Guesses</div>
+  </div>
+  <div class="slots" id="slots"></div>
+  <div class="bench-wrap" id="bench-wrap" style="display:none">
+    <div class="section-label">On the Bench</div>
+    <div class="chips" id="bench-chips"></div>
+  </div>
+  <div class="wrong-wrap" id="wrong-wrap" style="display:none">
+    <div class="section-label">Not on this Team</div>
+    <div class="chips" id="wrong-chips"></div>
+  </div>
+  <div class="input-wrap" id="input-wrap" style="position:relative">
+    <input type="text" class="guess-input" id="guess-input"
+      placeholder="Type a player name…" autocomplete="off" autocorrect="off" spellcheck="false">
+    <span class="input-icon">🔍</span>
+    <div class="autocomplete" id="autocomplete"></div>
   </div>
 </div>
 
-<!-- RESULT MODAL (daily + single infinite round) -->
-<div class="modal-overlay" id="modal-result">
+<!-- MODALS -->
+
+<!-- How to Play -->
+<div class="overlay" id="m-how">
   <div class="modal">
-    <div class="modal-emoji" id="result-emoji">🏆</div>
-    <div class="modal-title" id="result-title">You Got It!</div>
-    <div class="modal-subtitle" id="result-subtitle"></div>
-    <div class="modal-stat">
-      <div class="modal-stat-num" id="result-stat-num">—</div>
-      <div class="modal-stat-label" id="result-stat-label">Total Guesses</div>
+    <div class="modal-title">How to Play</div>
+    <div style="margin-top:16px">
+      <div class="rule"><div class="rule-icon">🏀</div><div class="rule-text">You're given an <strong>NBA team and season</strong>. Name the most-used 5-man starting lineup.</div></div>
+      <div class="rule"><div class="rule-icon">🟩</div><div class="rule-text"><strong>Green</strong> — correct, that player was in the starting lineup.</div></div>
+      <div class="rule"><div class="rule-icon">🟨</div><div class="rule-text"><strong>Bench</strong> — on the roster that year but not in the most-used starting five.</div></div>
+      <div class="rule"><div class="rule-icon">❌</div><div class="rule-text"><strong>Red</strong> — not on the team that year.</div></div>
+      <div class="rule"><div class="rule-icon">♾️</div><div class="rule-text"><strong>Infinite</strong> — unlimited puzzles, end whenever and share your session.</div></div>
+      <div class="rule"><div class="rule-icon">🏆</div><div class="rule-text"><strong>Competitive</strong> — 3 wrong guesses per team reveals it. Track accuracy across your session.</div></div>
+      <div class="rule"><div class="rule-icon">📅</div><div class="rule-text"><strong>Daily</strong> — same puzzle for everyone, resets at midnight ET.</div></div>
     </div>
-    <div class="modal-lineup" id="result-lineup"></div>
-    <div class="modal-actions">
-      <button class="btn-share" id="btn-share">Share Result</button>
-      <button class="btn-next" id="btn-result-next" style="display:none;">Next Team →</button>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="btn-secondary" id="btn-close-how">Got it</button>
     </div>
-    <a href="https://ko-fi.com/noahbair" target="_blank" class="kofi-link">☕ Support Five Deep on Ko-fi</a>
+    <a href="https://ko-fi.com/noahbair" target="_blank" class="modal-kofi">☕ Support on Ko-fi</a>
   </div>
 </div>
 
-<!-- INFINITE SESSION SUMMARY MODAL -->
-<div class="modal-overlay" id="modal-session">
+<!-- Round Result (competitive only — auto-revealed) -->
+<div class="overlay" id="m-round">
+  <div class="modal">
+    <div class="modal-emoji" id="round-emoji">😤</div>
+    <div class="modal-title" id="round-title">Revealed</div>
+    <div class="modal-sub" id="round-sub"></div>
+    <div class="lineup-breakdown" id="round-breakdown"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="btn-round-next">Next Team →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Daily Result -->
+<div class="overlay" id="m-daily-result">
+  <div class="modal">
+    <div class="modal-emoji" id="dr-emoji">🏆</div>
+    <div class="modal-title" id="dr-title">Got The Five!</div>
+    <div class="modal-sub" id="dr-sub"></div>
+    <div class="stat-box">
+      <div class="stat-num" id="dr-stat-num">—</div>
+      <div class="stat-label">Total Guesses</div>
+    </div>
+    <div class="lineup-breakdown" id="dr-breakdown"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="btn-dr-share">Share Result</button>
+    </div>
+    <a href="https://ko-fi.com/noahbair" target="_blank" class="modal-kofi">☕ Support Five Deep on Ko-fi</a>
+  </div>
+</div>
+
+<!-- Session Summary (infinite + competitive) -->
+<div class="overlay" id="m-session">
   <div class="modal">
     <div class="modal-emoji">🏁</div>
-    <div class="modal-title">Session Complete</div>
-    <div class="modal-subtitle" id="session-subtitle">Here's how you did across 5 teams</div>
-    <div class="session-score">
-      <div class="session-score-item">
-        <div class="session-score-num" id="session-correct">0</div>
-        <div class="session-score-label">Players Found</div>
-      </div>
-      <div class="session-score-item">
-        <div class="session-score-num" id="session-guesses">0</div>
-        <div class="session-score-label">Total Guesses</div>
-      </div>
-    </div>
-    <div class="modal-lineup" id="session-breakdown"></div>
+    <div class="modal-title" id="sess-title">Session Complete</div>
+    <div class="modal-sub" id="sess-sub"></div>
+    <div class="session-grid" id="sess-stats"></div>
+    <div class="lineup-breakdown" id="sess-breakdown"></div>
     <div class="modal-actions">
-      <button class="btn-share" id="btn-share-session">Share Session</button>
-      <button class="btn-next" id="btn-play-again">Play Again</button>
+      <button class="btn-primary" id="btn-sess-share">Share Session</button>
+      <button class="btn-secondary" id="btn-sess-again">Play Again</button>
     </div>
-    <a href="https://ko-fi.com/noahbair" target="_blank" class="kofi-link">☕ Support Five Deep on Ko-fi</a>
+    <a href="https://ko-fi.com/noahbair" target="_blank" class="modal-kofi">☕ Support Five Deep on Ko-fi</a>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ═══════════════════════════════════════════════════════════
-// DATA & STATE
+// STATE
 // ═══════════════════════════════════════════════════════════
+let gameData = null, allPlayers = [], playerIndex = {};
+let mode = null, decade = 'all';
 
-let gameData = null;
-let allPlayers = [];
-let playerIndex = {}; // id -> name
+// Current puzzle
+let puzzle = null, slots = [], rosterIds = new Set();
+let guessCount = 0, benchList = [], wrongList = [], gameOver = false;
+let strikes = 0;
 
-// Game state
-let mode = null; // 'daily' | 'infinite'
-let decade = 'all';
-let currentPuzzle = null; // { teamAbbrev, season, teamData }
-let slots = []; // [{player, solved, revealed}]
-let rosterIds = new Set();
-let guessCount = 0;
-let benchGuesses = []; // [{id, name}]
-let wrongGuesses = []; // [name]
-let gameOver = false;
+// Session (infinite + competitive)
+let sessionResults = [];  // [{puzzle, correct, guesses, strikes}]
 
-// Infinite session
-let sessionPuzzles = []; // array of puzzle keys played this session
-let sessionResults = []; // [{puzzle, correct, guesses}]
-let sessionIdx = 0;
-const SESSION_SIZE = 5;
+const DECADES_10 = ["2010-11","2011-12","2012-13","2013-14","2014-15","2015-16","2016-17","2017-18","2018-19","2019-20"];
+const DECADES_20 = ["2020-21","2021-22","2022-23","2023-24","2024-25","2025-26"];
 
-// ── ELIGIBLE PUZZLES (games_together >= 20) ──────────────────
-function getEligiblePuzzles(filterDecade = 'all') {
-  const puzzles = [];
-  const decade2010s = ["2010-11","2011-12","2012-13","2013-14","2014-15","2015-16","2016-17","2017-18","2018-19","2019-20"];
-  const decade2020s = ["2020-21","2021-22","2022-23","2023-24","2024-25","2025-26"];
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
 
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+let toastT;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+function headshot(id) { return `https://cdn.nba.com/headshots/nba/latest/260x190/${id}.png`; }
+function logo(teamId)  { return `https://cdn.nba.com/logos/nba/${teamId}/global/L/logo.svg`; }
+
+function isDST(d) {
+  const jan = new Date(d.getFullYear(),0,1), jul = new Date(d.getFullYear(),6,1);
+  return d.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+}
+function etNow() {
+  const d = new Date(), off = isDST(d) ? -4 : -5;
+  return new Date(d.getTime() + (off * 60 + d.getTimezoneOffset()) * 60000);
+}
+function dailyKey() {
+  const d = etNow();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PUZZLES
+// ═══════════════════════════════════════════════════════════
+function eligible(filterDecade = 'all') {
+  const out = [];
   for (const [season, teams] of Object.entries(gameData.seasons)) {
-    if (filterDecade === '2010s' && !decade2010s.includes(season)) continue;
-    if (filterDecade === '2020s' && !decade2020s.includes(season)) continue;
-    for (const [abbrev, teamData] of Object.entries(teams)) {
-      if (teamData.games_together >= 20) {
-        puzzles.push({ season, abbrev, teamData });
-      }
+    if (filterDecade === '2010s' && !DECADES_10.includes(season)) continue;
+    if (filterDecade === '2020s' && !DECADES_20.includes(season)) continue;
+    for (const [abbrev, td] of Object.entries(teams)) {
+      if ((td.games_together || 0) >= 20) out.push({ season, abbrev, td });
     }
   }
-  return puzzles;
-}
-
-// ── DAILY PUZZLE SEED ────────────────────────────────────────
-function getDailyPuzzle() {
-  // Get current date in ET (UTC-5 standard, UTC-4 daylight)
-  const now = new Date();
-  const etOffset = isDST(now) ? -4 : -5;
-  const etNow = new Date(now.getTime() + (etOffset * 60 + now.getTimezoneOffset()) * 60000);
-  const epoch = new Date(2025, 0, 1); // Jan 1 2025
-  const dayNum = Math.floor((etNow - epoch) / (1000 * 60 * 60 * 24));
-
-  const eligible = getEligiblePuzzles('all');
-  const idx = dayNum % eligible.length;
-  // Shuffle deterministically using dayNum as seed
-  const shuffled = seededShuffle(eligible, 42); // fixed seed for consistent order
-  return shuffled[idx % shuffled.length];
-}
-
-function isDST(date) {
-  const jan = new Date(date.getFullYear(), 0, 1);
-  const jul = new Date(date.getFullYear(), 6, 1);
-  return date.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+  return out;
 }
 
 function seededShuffle(arr, seed) {
-  const a = [...arr];
-  let s = seed;
+  const a = [...arr]; let s = seed;
   for (let i = a.length - 1; i > 0; i--) {
     s = (s * 1664525 + 1013904223) & 0xffffffff;
-    const j = Math.abs(s) % (i + 1);
-    [a[i], a[j]] = [a[j], a[i]];
+    [a[i], a[Math.abs(s) % (i + 1)]] = [a[Math.abs(s) % (i + 1)], a[i]];
   }
   return a;
 }
 
-function getDailyKey() {
-  const now = new Date();
-  const etOffset = isDST(now) ? -4 : -5;
-  const etNow = new Date(now.getTime() + (etOffset * 60 + now.getTimezoneOffset()) * 60000);
-  return `${etNow.getFullYear()}-${String(etNow.getMonth()+1).padStart(2,'0')}-${String(etNow.getDate()).padStart(2,'0')}`;
+function getDailyPuzzle() {
+  const d = etNow(), epoch = new Date(2025, 0, 1);
+  const day = Math.floor((d - epoch) / 86400000);
+  const pool = seededShuffle(eligible('all'), 42);
+  return pool[day % pool.length];
 }
 
-// ── RANDOM PUZZLE (infinite) ─────────────────────────────────
-function getRandomPuzzle(filterDecade, exclude = []) {
-  const eligible = getEligiblePuzzles(filterDecade).filter(
-    p => !exclude.includes(`${p.abbrev}_${p.season}`)
-  );
-  if (!eligible.length) return getEligiblePuzzles(filterDecade)[Math.floor(Math.random() * getEligiblePuzzles(filterDecade).length)];
-  return eligible[Math.floor(Math.random() * eligible.length)];
-}
-
-// ── HEADSHOT URL ─────────────────────────────────────────────
-function headshotUrl(id) {
-  return `https://cdn.nba.com/headshots/nba/latest/260x190/${id}.png`;
-}
-
-function logoUrl(teamId) {
-  return `https://cdn.nba.com/logos/nba/${teamId}/global/L/logo.svg`;
-}
-
-// ═══════════════════════════════════════════════════════════
-// SCREENS
-// ═══════════════════════════════════════════════════════════
-
-function showScreen(id) {
-  ['screen-mode','screen-decade','screen-spinner','screen-game'].forEach(s => {
-    const el = document.getElementById(s);
-    el.style.display = 'none';
-  });
-  const target = document.getElementById(id);
-  target.style.display = id === 'screen-game' ? 'block' : 'flex';
+function randomPuzzle(dec, exclude = []) {
+  const pool = eligible(dec).filter(p => !exclude.includes(`${p.abbrev}_${p.season}`));
+  return (pool.length ? pool : eligible(dec))[Math.floor(Math.random() * (pool.length || eligible(dec).length))];
 }
 
 // ═══════════════════════════════════════════════════════════
 // GAME INIT
 // ═══════════════════════════════════════════════════════════
+function startPuzzle(p) {
+  puzzle = p;
+  guessCount = 0; benchList = []; wrongList = []; gameOver = false; strikes = 0;
+  slots = p.td.starting_lineup.map(pl => ({ player: pl, solved: false, revealed: false }));
+  rosterIds = new Set((p.td.roster || []).map(r => r.id));
 
-function startPuzzle(puzzle) {
-  currentPuzzle = puzzle;
-  const { abbrev, season, teamData } = puzzle;
+  // Header
+  const logoEl = document.getElementById('team-logo');
+  logoEl.src = logo(p.td.team_id); logoEl.style.display = '';
+  document.getElementById('game-team-name').textContent = p.td.full_name;
+  document.getElementById('game-team-season').textContent = p.season;
+  const pill = document.getElementById('mode-pill');
+  pill.textContent = mode === 'daily' ? 'Daily' : mode === 'infinite' ? 'Infinite' : 'Compete';
+  pill.className = `mode-pill ${mode === 'competitive' ? 'competitive' : mode}`;
 
-  // Reset state
-  guessCount = 0;
-  benchGuesses = [];
-  wrongGuesses = [];
-  gameOver = false;
+  // Strikes bar
+  const sb = document.getElementById('strikes-bar');
+  sb.style.display = mode === 'competitive' ? 'flex' : 'none';
+  updateStrikes();
 
-  // Build slots from starting lineup
-  slots = teamData.starting_lineup.map(p => ({
-    player: p,
-    solved: false,
-    revealed: false
-  }));
-
-  // Build roster set
-  rosterIds = new Set(teamData.roster.map(p => p.id));
-
-  // Update header
-  document.getElementById('team-logo').src = logoUrl(teamData.team_id);
-  document.getElementById('team-logo').style.display = '';
-  document.getElementById('team-name').textContent = teamData.full_name;
-  document.getElementById('team-season').textContent = season;
-  document.getElementById('mode-badge').textContent = mode === 'daily' ? 'Daily' : 'Infinite';
-  document.getElementById('mode-badge').className = `mode-badge ${mode}`;
-
-  // Render
-  renderSlots();
-  renderGuessCount();
-  document.getElementById('bench-section').style.display = 'none';
-  document.getElementById('wrong-section').style.display = 'none';
-  document.getElementById('bench-players').innerHTML = '';
-  document.getElementById('wrong-players').innerHTML = '';
-  document.getElementById('input-area').style.display = 'block';
+  // Reset UI
+  document.getElementById('bench-wrap').style.display = 'none';
+  document.getElementById('wrong-wrap').style.display = 'none';
+  document.getElementById('bench-chips').innerHTML = '';
+  document.getElementById('wrong-chips').innerHTML = '';
+  document.getElementById('input-wrap').style.display = 'block';
   document.getElementById('guess-input').value = '';
   document.getElementById('autocomplete').innerHTML = '';
 
-  showScreen('screen-game');
-  document.getElementById('guess-input').focus();
-}
-
-function renderSlots() {
-  const container = document.getElementById('slots');
-  container.innerHTML = '';
-
-  slots.forEach((slot, i) => {
-    const el = document.createElement('div');
-    el.className = 'slot' + (slot.solved ? ' correct' : '') + (slot.revealed ? ' revealed' : '');
-    el.id = `slot-${i}`;
-
-    let avatarHtml = '';
-    if (slot.solved || slot.revealed) {
-      avatarHtml = `<div class="slot-avatar"><img src="${headshotUrl(slot.player.id)}" alt="" onerror="this.parentElement.innerHTML='👤'"></div>`;
-    } else {
-      avatarHtml = `<div class="slot-avatar">👤</div>`;
-    }
-
-    let nameHtml = '';
-    let statusHtml = '';
-    let checkHtml = '';
-
-    if (slot.solved) {
-      nameHtml = slot.player.name;
-      statusHtml = 'Starting Five';
-      checkHtml = '✅';
-    } else if (slot.revealed) {
-      nameHtml = slot.player.name;
-      statusHtml = 'Revealed';
-      checkHtml = '👁️';
-    } else {
-      nameHtml = `Player ${i + 1}`;
-      statusHtml = '?????';
-      checkHtml = '';
-    }
-
-    el.innerHTML = `
-      <div class="slot-num">${i + 1}</div>
-      ${avatarHtml}
-      <div class="slot-info">
-        <div class="slot-name">${nameHtml}</div>
-        <div class="slot-status">${statusHtml}</div>
-      </div>
-      <div class="slot-check">${checkHtml}</div>
-    `;
-    container.appendChild(el);
-  });
+  renderSlots(); renderGuessCount();
+  show('s-game');
+  setTimeout(() => document.getElementById('guess-input').focus(), 100);
 }
 
 function renderGuessCount() {
-  document.getElementById('guess-count-num').textContent = guessCount;
+  document.getElementById('guess-num').textContent = guessCount;
+}
+
+function updateStrikes() {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`strike-${i}`);
+    el.textContent = i <= strikes ? '❌' : '⬜';
+  }
+}
+
+function renderSlots() {
+  const c = document.getElementById('slots');
+  c.innerHTML = '';
+  slots.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'slot' + (s.solved ? ' correct' : '') + (s.revealed ? ' revealed' : '');
+    el.id = `slot-${i}`;
+
+    const hasInfo = s.solved || s.revealed;
+    const pos = s.player.position || '?';
+    const avatarHtml = hasInfo
+      ? `<div class="slot-avatar"><img src="${headshot(s.player.id)}" alt="" onerror="this.parentElement.innerHTML='👤'"></div>`
+      : `<div class="slot-avatar">👤</div>`;
+
+    const nameHtml = hasInfo ? s.player.name : `Player ${i+1}`;
+    const statusHtml = s.solved ? 'Starting Five' : s.revealed ? 'Revealed' : '?????';
+    const checkHtml = s.solved ? '✅' : s.revealed ? '👁️' : '';
+    const posBadge = hasInfo ? `<span class="pos-badge">${pos}</span>` : '';
+
+    el.innerHTML = `
+      <div class="slot-num">${i+1}</div>
+      ${avatarHtml}
+      <div class="slot-body">
+        <div class="slot-name">${nameHtml}</div>
+        <div class="slot-meta">
+          <span class="slot-status">${statusHtml}</span>
+          ${posBadge}
+        </div>
+      </div>
+      <div class="slot-check">${checkHtml}</div>
+    `;
+    c.appendChild(el);
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
 // GUESSING
 // ═══════════════════════════════════════════════════════════
-
-function submitGuess(playerId, playerName) {
+function submitGuess(pid, pname) {
   if (gameOver) return;
   document.getElementById('autocomplete').innerHTML = '';
   document.getElementById('guess-input').value = '';
 
+  // Duplicate check
+  const dupSlot = slots.some(s => s.solved && s.player.id === pid);
+  const dupBench = benchList.some(b => b.id === pid);
+  const dupWrong = wrongList.includes(pname);
+  if (dupSlot || dupBench || dupWrong) { toast('Already guessed!'); return; }
+
   guessCount++;
   renderGuessCount();
 
-  // Check if already guessed
-  const alreadySolved = slots.some(s => s.solved && s.player.id === playerId);
-  const alreadyBenched = benchGuesses.some(b => b.id === playerId);
-  const alreadyWrong = wrongGuesses.some(w => w === playerName);
-  if (alreadySolved || alreadyBenched || alreadyWrong) {
-    showToast('Already guessed!');
-    guessCount--; // don't count duplicate
-    renderGuessCount();
-    return;
-  }
-
-  // Check if correct (in starting lineup)
-  const slotIdx = slots.findIndex(s => !s.solved && s.player.id === playerId);
-  if (slotIdx !== -1) {
-    slots[slotIdx].solved = true;
+  // Correct (in starting lineup)
+  const si = slots.findIndex(s => !s.solved && s.player.id === pid);
+  if (si !== -1) {
+    slots[si].solved = true;
     renderSlots();
-    const slotEl = document.getElementById(`slot-${slotIdx}`);
-    slotEl.classList.add('just-correct');
-    setTimeout(() => slotEl.classList.remove('just-correct'), 400);
-    showToast('✅ Starting Five!');
-    checkWin();
+    const el = document.getElementById(`slot-${si}`);
+    el.classList.add('pop');
+    setTimeout(() => el.classList.remove('pop'), 400);
+    toast('✅ Starting Five!');
+    if (slots.every(s => s.solved)) {
+      gameOver = true;
+      document.getElementById('input-wrap').style.display = 'none';
+      setTimeout(() => showResult(true), 600);
+    }
     return;
   }
 
-  // Check if on roster (bench)
-  if (rosterIds.has(playerId)) {
-    benchGuesses.push({ id: playerId, name: playerName });
+  // Bench
+  if (rosterIds.has(pid)) {
+    benchList.push({ id: pid, name: pname });
     renderBench();
-    showToast('🟨 On the Bench');
+    toast('🟨 On the Bench');
     return;
   }
 
   // Wrong
-  wrongGuesses.push(playerName);
+  wrongList.push(pname);
   renderWrong();
-  const input = document.getElementById('guess-input');
-  input.classList.add('shake');
-  setTimeout(() => input.classList.remove('shake'), 400);
-  showToast('❌ Not on this team');
+  document.getElementById('guess-input').classList.add('shake');
+  setTimeout(() => document.getElementById('guess-input').classList.remove('shake'), 400);
+  toast('❌ Not on this team');
+
+  // Competitive strikes
+  if (mode === 'competitive') {
+    strikes++;
+    updateStrikes();
+    const hitEl = document.getElementById(`strike-${strikes}`);
+    if (hitEl) hitEl.classList.add('hit');
+    if (strikes >= 3) {
+      gameOver = true;
+      document.getElementById('input-wrap').style.display = 'none';
+      slots.forEach(s => { if (!s.solved) s.revealed = true; });
+      renderSlots();
+      setTimeout(() => showRoundReveal(), 500);
+    }
+  }
 }
 
 function renderBench() {
-  const section = document.getElementById('bench-section');
-  const container = document.getElementById('bench-players');
-  section.style.display = 'block';
-  container.innerHTML = '';
-  benchGuesses.forEach(p => {
+  const w = document.getElementById('bench-wrap');
+  const c = document.getElementById('bench-chips');
+  w.style.display = 'block'; c.innerHTML = '';
+  benchList.forEach(p => {
     const chip = document.createElement('div');
     chip.className = 'bench-chip';
-    chip.innerHTML = `
-      <div class="bench-chip-avatar"><img src="${headshotUrl(p.id)}" alt="" onerror="this.style.display='none'"></div>
-      <span class="bench-chip-name">${p.name}</span>
-    `;
-    container.appendChild(chip);
+    chip.innerHTML = `<div class="chip-avatar"><img src="${headshot(p.id)}" alt="" onerror="this.style.display='none'"></div><span class="bench-chip-name">${p.name}</span>`;
+    c.appendChild(chip);
   });
 }
 
 function renderWrong() {
-  const section = document.getElementById('wrong-section');
-  const container = document.getElementById('wrong-players');
-  section.style.display = wrongGuesses.length > 0 ? 'block' : 'none';
-  container.innerHTML = '';
-  wrongGuesses.forEach(name => {
+  const w = document.getElementById('wrong-wrap');
+  const c = document.getElementById('wrong-chips');
+  w.style.display = wrongList.length ? 'block' : 'none';
+  c.innerHTML = '';
+  wrongList.forEach(name => {
     const chip = document.createElement('div');
     chip.className = 'wrong-chip';
     chip.textContent = name;
-    container.appendChild(chip);
-  });
-}
-
-function checkWin() {
-  const allSolved = slots.every(s => s.solved);
-  if (allSolved) {
-    gameOver = true;
-    document.getElementById('input-area').style.display = 'none';
-    setTimeout(() => showResultModal(true), 600);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// AUTOCOMPLETE
-// ═══════════════════════════════════════════════════════════
-
-let acFocusIdx = -1;
-
-function updateAutocomplete(query) {
-  const container = document.getElementById('autocomplete');
-  if (!query || query.length < 2) { container.innerHTML = ''; return; }
-
-  const q = query.toLowerCase();
-  const matches = allPlayers
-    .filter(p => p.name.toLowerCase().includes(q))
-    .slice(0, 8);
-
-  container.innerHTML = '';
-  acFocusIdx = -1;
-
-  matches.forEach((p, i) => {
-    const item = document.createElement('div');
-    item.className = 'autocomplete-item';
-    item.dataset.id = p.id;
-    item.dataset.name = p.name;
-    item.innerHTML = `
-      <div class="autocomplete-avatar"><img src="${headshotUrl(p.id)}" alt="" onerror="this.style.display='none'"></div>
-      <div class="autocomplete-name">${p.name}</div>
-    `;
-    item.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      submitGuess(p.id, p.name);
-    });
-    container.appendChild(item);
+    c.appendChild(chip);
   });
 }
 
 // ═══════════════════════════════════════════════════════════
-// RESULT MODAL
+// RESULTS
 // ═══════════════════════════════════════════════════════════
-
-function showResultModal(won) {
-  // Reveal any unsolved slots
-  slots.forEach((s, i) => {
-    if (!s.solved) {
-      s.revealed = true;
-    }
-  });
-  renderSlots();
-
-  const correctCount = slots.filter(s => s.solved).length;
-
-  document.getElementById('result-emoji').textContent = correctCount === 5 ? '🏆' : correctCount >= 3 ? '🏀' : '😤';
-  document.getElementById('result-title').textContent = correctCount === 5 ? 'Got The Five!' : `${correctCount}/5 Found`;
-  document.getElementById('result-subtitle').textContent =
-    `${currentPuzzle.teamData.full_name} — ${currentPuzzle.season}`;
-  document.getElementById('result-stat-num').textContent = guessCount;
-  document.getElementById('result-stat-label').textContent = guessCount === 1 ? 'Guess' : 'Total Guesses';
-
-  // Lineup breakdown
-  const lineupEl = document.getElementById('result-lineup');
-  lineupEl.innerHTML = '<div class="modal-lineup-title">The Starting Five</div>';
+function buildBreakdown(containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '<div class="breakdown-label">The Starting Five</div>';
   slots.forEach(s => {
     const row = document.createElement('div');
-    row.className = 'modal-player-row';
+    row.className = 'breakdown-row';
     row.innerHTML = `
-      <div class="modal-player-avatar"><img src="${headshotUrl(s.player.id)}" alt="" onerror="this.style.display='none'"></div>
-      <div class="modal-player-name">${s.player.name}</div>
-      <div class="modal-player-status ${s.solved ? '' : 'missed'}">${s.solved ? '✅' : 'Missed'}</div>
+      <div class="breakdown-avatar"><img src="${headshot(s.player.id)}" alt="" onerror="this.style.display='none'"></div>
+      <div class="breakdown-name">${s.player.name}</div>
+      <div class="breakdown-status ${s.solved ? 'hit' : 'miss'}">${s.solved ? '✅' : 'Missed'}</div>
     `;
-    lineupEl.appendChild(row);
+    c.appendChild(row);
   });
+}
 
-  // Save to session
-  if (mode === 'infinite') {
-    sessionResults.push({
-      puzzle: currentPuzzle,
-      correct: correctCount,
-      guesses: guessCount
-    });
-  }
+function showResult(won) {
+  slots.forEach(s => { if (!s.solved) s.revealed = true; });
+  renderSlots();
+  const correct = slots.filter(s => s.solved).length;
+  const result = { puzzle, correct, guesses: guessCount, strikes };
+  sessionResults.push(result);
 
-  // Daily: save to localStorage
   if (mode === 'daily') {
-    localStorage.setItem('fivedeep_daily_' + getDailyKey(), JSON.stringify({
-      guesses: guessCount,
-      correct: correctCount
-    }));
-  }
-
-  // Show/hide next button
-  const nextBtn = document.getElementById('btn-result-next');
-  if (mode === 'infinite' && sessionResults.length < SESSION_SIZE) {
-    nextBtn.style.display = 'block';
-    nextBtn.textContent = `Next Team (${sessionResults.length}/${SESSION_SIZE}) →`;
-  } else if (mode === 'infinite' && sessionResults.length >= SESSION_SIZE) {
-    nextBtn.style.display = 'block';
-    nextBtn.textContent = 'See Session Results →';
+    localStorage.setItem('fd_daily_' + dailyKey(), JSON.stringify({ correct, guesses: guessCount }));
+    const emoji = correct === 5 ? '🏆' : correct >= 3 ? '🏀' : '😤';
+    document.getElementById('dr-emoji').textContent = emoji;
+    document.getElementById('dr-title').textContent = correct === 5 ? 'Got The Five!' : `${correct}/5 Found`;
+    document.getElementById('dr-sub').textContent = `${puzzle.td.full_name} — ${puzzle.season}`;
+    document.getElementById('dr-stat-num').textContent = guessCount;
+    buildBreakdown('dr-breakdown');
+    openModal('m-daily-result');
   } else {
-    nextBtn.style.display = 'none';
+    // infinite/competitive: go back to spinner
+    show('s-spinner');
+    updateProgressDots();
+    resetSpinner();
   }
-
-  document.getElementById('modal-result').classList.add('open');
 }
 
-function buildShareText() {
-  const correctCount = slots.filter(s => s.solved).length;
-  const emoji = correctCount === 5 ? '🏆' : correctCount >= 3 ? '🏀' : '😤';
-  const date = getDailyKey();
-  let text = `Five Deep ${mode === 'daily' ? date : '(Infinite)'}\n`;
-  text += `${currentPuzzle.teamData.full_name} ${currentPuzzle.season}\n`;
-  text += `${emoji} ${correctCount}/5 in ${guessCount} guess${guessCount !== 1 ? 'es' : ''}\n`;
-  text += `fivedeep.com`;
-  return text;
+function showRoundReveal() {
+  const correct = slots.filter(s => s.solved).length;
+  sessionResults.push({ puzzle, correct, guesses: guessCount, strikes });
+  const emoji = correct === 5 ? '🏆' : correct >= 3 ? '🏀' : '😤';
+  document.getElementById('round-emoji').textContent = emoji;
+  document.getElementById('round-title').textContent = `${correct}/5 Found`;
+  document.getElementById('round-sub').textContent = `${puzzle.td.full_name} — ${puzzle.season} · ${guessCount} guesses · ${strikes} strike${strikes !== 1 ? 's' : ''}`;
+  buildBreakdown('round-breakdown');
+  openModal('m-round');
 }
 
 // ═══════════════════════════════════════════════════════════
-// INFINITE SESSION
+// SESSION
 // ═══════════════════════════════════════════════════════════
-
-function updateInfiniteProgress() {
-  const container = document.getElementById('infinite-progress');
-  container.innerHTML = '';
-  for (let i = 0; i < SESSION_SIZE; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'progress-dot' +
-      (i < sessionResults.length ? ' done' : '') +
-      (i === sessionResults.length ? ' current' : '');
-    container.appendChild(dot);
-  }
+function updateProgressDots() {
+  const c = document.getElementById('progress-dots');
+  if (mode === 'infinite') { c.style.display = 'none'; return; }
+  // competitive: show dots
+  c.style.display = 'flex'; c.innerHTML = '';
+  // show last 5 results as dots
+  const recent = sessionResults.slice(-10);
+  recent.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'pdot done';
+    c.appendChild(d);
+  });
+  const cur = document.createElement('div');
+  cur.className = 'pdot cur';
+  c.appendChild(cur);
 }
 
 function showSessionSummary() {
   const totalCorrect = sessionResults.reduce((a, b) => a + b.correct, 0);
   const totalGuesses = sessionResults.reduce((a, b) => a + b.guesses, 0);
+  const totalPossible = sessionResults.length * 5;
+  const accuracy = totalPossible > 0 ? Math.round(totalCorrect / (totalCorrect + sessionResults.reduce((a,b) => a + b.guesses - b.correct, 0)) * 100) : 0;
 
-  document.getElementById('session-correct').textContent = `${totalCorrect}/25`;
-  document.getElementById('session-guesses').textContent = totalGuesses;
+  document.getElementById('sess-title').textContent = mode === 'competitive' ? 'Compete Summary' : 'Session Complete';
+  document.getElementById('sess-sub').textContent = `${sessionResults.length} team${sessionResults.length !== 1 ? 's' : ''} played`;
 
-  const breakdown = document.getElementById('session-breakdown');
-  breakdown.innerHTML = '<div class="modal-lineup-title">Team Breakdown</div>';
+  const statsEl = document.getElementById('sess-stats');
+  statsEl.className = `session-grid ${mode === 'competitive' ? 'competitive-session' : ''}`;
+
+  if (mode === 'competitive') {
+    statsEl.innerHTML = `
+      <div class="session-stat"><div class="session-stat-num">${totalCorrect}/${totalPossible}</div><div class="session-stat-label">Players Found</div></div>
+      <div class="session-stat"><div class="session-stat-num">${accuracy}%</div><div class="session-stat-label">Accuracy</div></div>
+      <div class="session-stat"><div class="session-stat-num">${totalGuesses}</div><div class="session-stat-label">Total Guesses</div></div>
+      <div class="session-stat"><div class="session-stat-num">${sessionResults.reduce((a,b)=>a+(b.strikes>=3?1:0),0)}</div><div class="session-stat-label">Teams Revealed</div></div>
+    `;
+  } else {
+    statsEl.innerHTML = `
+      <div class="session-stat"><div class="session-stat-num">${totalCorrect}/${totalPossible}</div><div class="session-stat-label">Players Found</div></div>
+      <div class="session-stat"><div class="session-stat-num">${totalGuesses}</div><div class="session-stat-label">Total Guesses</div></div>
+    `;
+  }
+
+  const breakdown = document.getElementById('sess-breakdown');
+  breakdown.innerHTML = '<div class="breakdown-label">Team Breakdown</div>';
   sessionResults.forEach(r => {
     const row = document.createElement('div');
-    row.className = 'modal-player-row';
+    row.className = 'session-team-row';
     const emoji = r.correct === 5 ? '✅' : r.correct >= 3 ? '🏀' : '😤';
     row.innerHTML = `
-      <div class="modal-player-name" style="font-size:14px;">${r.puzzle.teamData.full_name} ${r.puzzle.season}</div>
-      <div class="modal-player-status">${emoji} ${r.correct}/5 · ${r.guesses}g</div>
+      <span style="font-size:14px">${emoji}</span>
+      <span class="session-team-name">${r.puzzle.td.full_name} ${r.puzzle.season}</span>
+      <span class="session-team-score">${r.correct}/5 · ${r.guesses}g</span>
     `;
     breakdown.appendChild(row);
   });
 
-  document.getElementById('modal-session').classList.add('open');
+  openModal('m-session');
 }
 
-function buildSessionShareText() {
+function buildShareText() {
+  if (mode === 'daily') {
+    const correct = slots.filter(s => s.solved).length;
+    const emoji = correct === 5 ? '🏆' : correct >= 3 ? '🏀' : '😤';
+    return `Five Deep ${dailyKey()}\n${puzzle.td.full_name} ${puzzle.season}\n${emoji} ${correct}/5 in ${guessCount} guess${guessCount !== 1 ? 'es' : ''}\nfive-deep.noahlbair.workers.dev`;
+  }
   const totalCorrect = sessionResults.reduce((a, b) => a + b.correct, 0);
   const totalGuesses = sessionResults.reduce((a, b) => a + b.guesses, 0);
-  let text = `Five Deep — Infinite Mode\n`;
-  text += `${totalCorrect}/25 correct · ${totalGuesses} total guesses\n`;
+  const totalPossible = sessionResults.length * 5;
+  const accuracy = totalPossible > 0 ? Math.round(totalCorrect / (totalCorrect + sessionResults.reduce((a,b) => a + b.guesses - b.correct, 0)) * 100) : 0;
+  let text = mode === 'competitive'
+    ? `Five Deep — Competitive\n${totalCorrect}/${totalPossible} correct · ${accuracy}% accuracy · ${totalGuesses} guesses\n`
+    : `Five Deep — Infinite\n${totalCorrect}/${totalPossible} players found · ${totalGuesses} total guesses\n`;
   sessionResults.forEach(r => {
     const emoji = r.correct === 5 ? '✅' : r.correct >= 3 ? '🏀' : '😤';
     text += `${emoji} ${r.puzzle.abbrev} ${r.puzzle.season}: ${r.correct}/5\n`;
   });
-  text += `fivedeep.com`;
+  text += `five-deep.noahlbair.workers.dev`;
   return text;
 }
 
 // ═══════════════════════════════════════════════════════════
 // SLOT MACHINE
 // ═══════════════════════════════════════════════════════════
+let chosenPuzzle = null, spinInterval = null;
 
-let spinInterval = null;
-let chosenPuzzle = null;
+function resetSpinner() {
+  document.getElementById('reel-team').textContent = '—';
+  document.getElementById('reel-season').textContent = '——';
+  document.getElementById('btn-spin').textContent = '🎰 Spin';
+  document.getElementById('btn-spin').disabled = false;
+  document.getElementById('btn-spin').onclick = doSpin;
+  document.getElementById('btn-spin-again').style.display = 'none';
 
-function spinReel() {
-  const btn = document.getElementById('spin-btn');
+  const endBtn = document.getElementById('btn-end-session');
+  endBtn.style.display = sessionResults.length > 0 ? 'block' : 'none';
+
+  const info = document.getElementById('session-info');
+  info.textContent = sessionResults.length > 0
+    ? `${sessionResults.length} team${sessionResults.length !== 1 ? 's' : ''} played this session`
+    : '';
+
+  // Apply mode class to spinner screen
+  const spinnerEl = document.getElementById('s-spinner');
+  spinnerEl.classList.toggle('competitive-mode', mode === 'competitive');
+  document.getElementById('slot-machine') && document.getElementById('slot-machine').classList.toggle('competitive-mode', mode === 'competitive');
+}
+
+function doSpin() {
+  const btn = document.getElementById('btn-spin');
   btn.disabled = true;
-
-  const reel = document.getElementById('slot-reel');
+  document.getElementById('btn-spin-again').style.display = 'none';
+  const reel = document.getElementById('reel');
   const reelTeam = document.getElementById('reel-team');
   const reelSeason = document.getElementById('reel-season');
-
   reel.classList.add('spinning');
 
-  const eligible = getEligiblePuzzles(decade);
   const played = sessionResults.map(r => `${r.puzzle.abbrev}_${r.puzzle.season}`);
-  const candidates = eligible.filter(p => !played.includes(`${p.abbrev}_${p.season}`));
-  const pool = candidates.length > 0 ? candidates : eligible;
+  const pool = eligible(decade).filter(p => !played.includes(`${p.abbrev}_${p.season}`));
+  const finalPool = pool.length > 0 ? pool : eligible(decade);
+  chosenPuzzle = finalPool[Math.floor(Math.random() * finalPool.length)];
 
-  let ticks = 0;
-  const totalTicks = 20 + Math.floor(Math.random() * 10);
-  chosenPuzzle = pool[Math.floor(Math.random() * pool.length)];
-
+  let ticks = 0, total = 18 + Math.floor(Math.random() * 8);
+  clearInterval(spinInterval);
   spinInterval = setInterval(() => {
-    const fake = pool[Math.floor(Math.random() * pool.length)];
-    reelTeam.textContent = fake.teamData.full_name;
+    const fake = finalPool[Math.floor(Math.random() * finalPool.length)];
+    reelTeam.textContent = fake.td.full_name;
     reelSeason.textContent = fake.season;
     ticks++;
-
-    if (ticks >= totalTicks) {
+    if (ticks >= total) {
       clearInterval(spinInterval);
       reel.classList.remove('spinning');
-      reelTeam.textContent = chosenPuzzle.teamData.full_name;
+      reelTeam.textContent = chosenPuzzle.td.full_name;
       reelSeason.textContent = chosenPuzzle.season;
-
-      btn.textContent = '▶️ Let\'s Go!';
+      btn.textContent = "▶️ Let's Go!";
       btn.disabled = false;
       btn.onclick = () => {
         startPuzzle(chosenPuzzle);
-        updateInfiniteProgress();
-        btn.textContent = '🎰 Spin';
-        btn.onclick = spinReel;
+        btn.onclick = doSpin;
       };
+      document.getElementById('btn-spin-again').style.display = 'block';
     }
-  }, 80);
+  }, 75);
 }
 
 // ═══════════════════════════════════════════════════════════
-// TOAST
+// AUTOCOMPLETE
 // ═══════════════════════════════════════════════════════════
-
-let toastTimeout;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => t.classList.remove('show'), 1800);
+let acIdx = -1;
+function updateAC(q) {
+  const c = document.getElementById('autocomplete');
+  if (!q || q.length < 2) { c.innerHTML = ''; return; }
+  const ql = q.toLowerCase();
+  const matches = allPlayers.filter(p => p.name.toLowerCase().includes(ql)).slice(0, 8);
+  c.innerHTML = ''; acIdx = -1;
+  matches.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'ac-item';
+    item.dataset.id = p.id; item.dataset.name = p.name;
+    item.innerHTML = `<div class="ac-avatar"><img src="${headshot(p.id)}" alt="" onerror="this.style.display='none'"></div><div class="ac-name">${p.name}</div>`;
+    item.addEventListener('mousedown', e => { e.preventDefault(); submitGuess(p.id, p.name); });
+    c.appendChild(item);
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════════════════════════
+function goHome() {
+  clearInterval(spinInterval);
+  show('s-home');
+  ['m-how','m-round','m-daily-result','m-session'].forEach(closeModal);
+}
+
+document.getElementById('logo-home').addEventListener('click', goHome);
+document.getElementById('btn-home-header').addEventListener('click', goHome);
+document.getElementById('btn-how').addEventListener('click', () => openModal('m-how'));
+document.getElementById('btn-close-how').addEventListener('click', () => closeModal('m-how'));
 
 document.getElementById('btn-daily').addEventListener('click', () => {
-  mode = 'daily';
-
-  // Check if already played today
-  const saved = localStorage.getItem('fivedeep_daily_' + getDailyKey());
-  if (saved) {
-    const result = JSON.parse(saved);
-    showToast(`Already played today! ${result.correct}/5 in ${result.guesses} guesses`);
-    // Still let them play again (no hard block)
-  }
-
-  const puzzle = getDailyPuzzle();
-  startPuzzle(puzzle);
+  mode = 'daily'; sessionResults = [];
+  const saved = localStorage.getItem('fd_daily_' + dailyKey());
+  if (saved) { const r = JSON.parse(saved); toast(`Already played today! ${r.correct}/5 in ${r.guesses} guesses`); }
+  startPuzzle(getDailyPuzzle());
 });
 
 document.getElementById('btn-infinite').addEventListener('click', () => {
-  mode = 'infinite';
-  sessionResults = [];
-  sessionIdx = 0;
-  showScreen('screen-decade');
+  mode = 'infinite'; sessionResults = [];
+  document.getElementById('decade-grid').classList.remove('competitive-mode');
+  show('s-decade');
 });
 
-document.getElementById('btn-back-decade').addEventListener('click', () => {
-  showScreen('screen-mode');
+document.getElementById('btn-competitive').addEventListener('click', () => {
+  mode = 'competitive'; sessionResults = [];
+  document.getElementById('decade-grid').classList.add('competitive-mode');
+  show('s-decade');
 });
+
+document.getElementById('btn-back-decade').addEventListener('click', () => show('s-home'));
+document.getElementById('btn-back-spinner').addEventListener('click', () => show('s-home'));
 
 document.querySelectorAll('.decade-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.decade-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
+    document.querySelectorAll('.decade-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
     decade = btn.dataset.decade;
-    // Show spinner
-    showScreen('screen-spinner');
-    updateInfiniteProgress();
-    // Reset reel
-    document.getElementById('reel-team').textContent = '—';
-    document.getElementById('reel-season').textContent = '——';
-    document.getElementById('spin-btn').textContent = '🎰 Spin';
-    document.getElementById('spin-btn').onclick = spinReel;
-    document.getElementById('spin-btn').disabled = false;
+    const spinnerEl = document.getElementById('s-spinner');
+    spinnerEl.classList.toggle('competitive-mode', mode === 'competitive');
+    show('s-spinner');
+    resetSpinner();
+    document.getElementById('progress-dots').style.display = 'none';
   });
 });
 
-document.getElementById('btn-back-spinner').addEventListener('click', () => {
-  showScreen('screen-decade');
+document.getElementById('btn-spin').addEventListener('click', doSpin);
+
+document.getElementById('btn-spin-again').addEventListener('click', () => {
+  document.getElementById('btn-spin-again').style.display = 'none';
+  document.getElementById('btn-spin').textContent = '🎰 Spin';
+  document.getElementById('btn-spin').onclick = doSpin;
+  doSpin();
+});
+
+document.getElementById('btn-end-session').addEventListener('click', () => {
+  if (sessionResults.length === 0) { toast('Play at least one team first!'); return; }
+  showSessionSummary();
 });
 
 // Input
-const guessInput = document.getElementById('guess-input');
-guessInput.addEventListener('input', (e) => {
-  updateAutocomplete(e.target.value);
+const gi = document.getElementById('guess-input');
+gi.addEventListener('input', e => updateAC(e.target.value));
+gi.addEventListener('keydown', e => {
+  const items = document.querySelectorAll('.ac-item');
+  if (e.key === 'ArrowDown') { e.preventDefault(); acIdx = Math.min(acIdx+1, items.length-1); items.forEach((el,i) => el.classList.toggle('foc', i === acIdx)); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); acIdx = Math.max(acIdx-1, 0); items.forEach((el,i) => el.classList.toggle('foc', i === acIdx)); }
+  else if (e.key === 'Enter') {
+    if (acIdx >= 0 && items[acIdx]) { const it = items[acIdx]; submitGuess(+it.dataset.id, it.dataset.name); }
+    else if (items.length === 1) { const it = items[0]; submitGuess(+it.dataset.id, it.dataset.name); }
+  } else if (e.key === 'Escape') { document.getElementById('autocomplete').innerHTML = ''; }
+});
+document.addEventListener('click', e => { if (!e.target.closest('#input-wrap')) document.getElementById('autocomplete').innerHTML = ''; });
+
+// Round reveal (competitive)
+document.getElementById('btn-round-next').addEventListener('click', () => {
+  closeModal('m-round');
+  show('s-spinner');
+  updateProgressDots();
+  resetSpinner();
 });
 
-guessInput.addEventListener('keydown', (e) => {
-  const items = document.querySelectorAll('.autocomplete-item');
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    acFocusIdx = Math.min(acFocusIdx + 1, items.length - 1);
-    items.forEach((el, i) => el.classList.toggle('focused', i === acFocusIdx));
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    acFocusIdx = Math.max(acFocusIdx - 1, 0);
-    items.forEach((el, i) => el.classList.toggle('focused', i === acFocusIdx));
-  } else if (e.key === 'Enter') {
-    if (acFocusIdx >= 0 && items[acFocusIdx]) {
-      const item = items[acFocusIdx];
-      submitGuess(parseInt(item.dataset.id), item.dataset.name);
-    } else if (items.length === 1) {
-      const item = items[0];
-      submitGuess(parseInt(item.dataset.id), item.dataset.name);
-    }
-  } else if (e.key === 'Escape') {
-    document.getElementById('autocomplete').innerHTML = '';
-  }
-});
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.input-area')) {
-    document.getElementById('autocomplete').innerHTML = '';
-  }
-});
-
-// Modals
-document.getElementById('btn-how').addEventListener('click', () => {
-  document.getElementById('modal-how').classList.add('open');
-});
-
-document.getElementById('btn-close-how').addEventListener('click', () => {
-  document.getElementById('modal-how').classList.remove('open');
-});
-
-document.getElementById('btn-share').addEventListener('click', () => {
+// Daily result
+document.getElementById('btn-dr-share').addEventListener('click', () => {
   const text = buildShareText();
-  if (navigator.share) {
-    navigator.share({ text });
-  } else {
-    navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!'));
-  }
+  if (navigator.share) navigator.share({ text });
+  else navigator.clipboard.writeText(text).then(() => toast('Copied!'));
 });
 
-document.getElementById('btn-result-next').addEventListener('click', () => {
-  document.getElementById('modal-result').classList.remove('open');
-  if (sessionResults.length >= SESSION_SIZE) {
-    showSessionSummary();
-  } else {
-    showScreen('screen-spinner');
-    updateInfiniteProgress();
-    document.getElementById('spin-btn').textContent = '🎰 Spin';
-    document.getElementById('spin-btn').onclick = spinReel;
-    document.getElementById('spin-btn').disabled = false;
-  }
+// Session
+document.getElementById('btn-sess-share').addEventListener('click', () => {
+  const text = buildShareText();
+  if (navigator.share) navigator.share({ text });
+  else navigator.clipboard.writeText(text).then(() => toast('Copied!'));
 });
-
-document.getElementById('btn-share-session').addEventListener('click', () => {
-  const text = buildSessionShareText();
-  if (navigator.share) {
-    navigator.share({ text });
-  } else {
-    navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!'));
-  }
-});
-
-document.getElementById('btn-play-again').addEventListener('click', () => {
-  document.getElementById('modal-session').classList.remove('open');
-  sessionResults = [];
-  sessionIdx = 0;
-  showScreen('screen-mode');
+document.getElementById('btn-sess-again').addEventListener('click', () => {
+  closeModal('m-session');
+  goHome();
 });
 
 // Close modals on overlay click
-['modal-how', 'modal-result', 'modal-session'].forEach(id => {
-  document.getElementById(id).addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) {
-      e.currentTarget.classList.remove('open');
-    }
-  });
+['m-how','m-daily-result','m-session'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); });
 });
 
 // ═══════════════════════════════════════════════════════════
 // LOAD DATA
 // ═══════════════════════════════════════════════════════════
-
 async function loadData() {
   try {
     const res = await fetch('fivedeep_data.json');
     gameData = await res.json();
     allPlayers = gameData.all_players;
     allPlayers.forEach(p => { playerIndex[p.id] = p.name; });
-    console.log(`✅ Five Deep loaded: ${allPlayers.length} players, ${Object.keys(gameData.seasons).length} seasons`);
+    console.log(`✅ Five Deep: ${allPlayers.length} players, ${Object.keys(gameData.seasons).length} seasons`);
   } catch (e) {
-    console.error('Failed to load game data', e);
-    showToast('Failed to load data. Refresh the page.');
+    console.error('Failed to load data', e);
+    toast('Failed to load game data. Refresh the page.');
   }
 }
-
 loadData();
 </script>
 </body>
