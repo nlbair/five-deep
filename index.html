@@ -207,16 +207,25 @@ header{
   background:radial-gradient(circle at 50% 0%,var(--comp-dim),transparent 60%);
 }
 .reel{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:36px;letter-spacing:1px;line-height:1.1;
-  min-height:90px;display:flex;flex-direction:column;
+  min-height:120px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  position:relative;z-index:1;
+  position:relative;z-index:1;gap:10px;
 }
-.reel-team{color:var(--inf);display:block}
-.competitive-mode .reel-team{color:var(--comp)}
-.reel-season{color:var(--text-muted);font-size:22px;display:block}
-.reel.spinning .reel-team,
+.reel-logo{
+  width:80px;height:80px;object-fit:contain;
+  transition:opacity .1s;
+}
+.reel-logo.placeholder{
+  width:80px;height:80px;
+  background:var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;
+}
+.reel-season{
+  font-family:'Bebas Neue',sans-serif;
+  color:var(--text-muted);font-size:22px;display:block;letter-spacing:1px;
+}
+.reel.spinning .reel-logo,
 .reel.spinning .reel-season{animation:blink .07s steps(1) infinite}
 @keyframes blink{50%{opacity:.2}}
 .spin-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -632,7 +641,7 @@ header{
     <div class="progress-dots" id="progress-dots" style="display:none"></div>
     <div class="slot-machine">
       <div class="reel" id="reel">
-        <span class="reel-team" id="reel-team">—</span>
+        <img class="reel-logo" id="reel-logo" src="" alt="" onerror="this.style.display='none'">
         <span class="reel-season" id="reel-season">——</span>
       </div>
     </div>
@@ -1165,12 +1174,27 @@ function buildShareText() {
 // ═══════════════════════════════════════════════════════════
 let chosenPuzzle = null, spinInterval = null;
 
+function setReel(puzzle) {
+  const logoEl = document.getElementById('reel-logo');
+  const seasonEl = document.getElementById('reel-season');
+  if (puzzle) {
+    logoEl.src = logo(puzzle.td.team_id);
+    logoEl.style.display = '';
+    logoEl.alt = puzzle.td.full_name;
+    seasonEl.textContent = puzzle.td.full_name + ' · ' + puzzle.season;
+  } else {
+    logoEl.src = '';
+    logoEl.style.display = 'none';
+    seasonEl.textContent = '——';
+  }
+}
+
 function resetSpinner() {
-  document.getElementById('reel-team').textContent = '—';
-  document.getElementById('reel-season').textContent = '——';
-  document.getElementById('btn-spin').textContent = '🎰 Spin';
-  document.getElementById('btn-spin').disabled = false;
-  document.getElementById('btn-spin').onclick = doSpin;
+  setReel(null);
+  const btn = document.getElementById('btn-spin');
+  btn.textContent = '🎰 Spin';
+  btn.disabled = false;
+  btn.onclick = doSpin;
   document.getElementById('btn-spin-again').style.display = 'none';
 
   const endBtn = document.getElementById('btn-end-session');
@@ -1181,10 +1205,8 @@ function resetSpinner() {
     ? `${sessionResults.length} team${sessionResults.length !== 1 ? 's' : ''} played this session`
     : '';
 
-  // Apply mode class to spinner screen
   const spinnerEl = document.getElementById('s-spinner');
   spinnerEl.classList.toggle('competitive-mode', mode === 'competitive');
-  document.getElementById('slot-machine') && document.getElementById('slot-machine').classList.toggle('competitive-mode', mode === 'competitive');
 }
 
 function doSpin() {
@@ -1192,31 +1214,31 @@ function doSpin() {
   btn.disabled = true;
   document.getElementById('btn-spin-again').style.display = 'none';
   const reel = document.getElementById('reel');
-  const reelTeam = document.getElementById('reel-team');
-  const reelSeason = document.getElementById('reel-season');
   reel.classList.add('spinning');
 
   const played = sessionResults.map(r => `${r.puzzle.abbrev}_${r.puzzle.season}`);
   const pool = eligible(decade).filter(p => !played.includes(`${p.abbrev}_${p.season}`));
   const finalPool = pool.length > 0 ? pool : eligible(decade);
-  chosenPuzzle = finalPool[Math.floor(Math.random() * finalPool.length)];
+
+  // Capture chosen puzzle at spin time — don't use outer variable
+  const picked = finalPool[Math.floor(Math.random() * finalPool.length)];
+  chosenPuzzle = picked;
 
   let ticks = 0, total = 18 + Math.floor(Math.random() * 8);
   clearInterval(spinInterval);
   spinInterval = setInterval(() => {
     const fake = finalPool[Math.floor(Math.random() * finalPool.length)];
-    reelTeam.textContent = fake.td.full_name;
-    reelSeason.textContent = fake.season;
+    setReel(fake);
     ticks++;
     if (ticks >= total) {
       clearInterval(spinInterval);
       reel.classList.remove('spinning');
-      reelTeam.textContent = chosenPuzzle.td.full_name;
-      reelSeason.textContent = chosenPuzzle.season;
+      setReel(picked);  // use captured local variable, not chosenPuzzle
       btn.textContent = "▶️ Let's Go!";
       btn.disabled = false;
       btn.onclick = () => {
-        startPuzzle(chosenPuzzle);
+        startPuzzle(picked);  // captured local variable
+        btn.textContent = '🎰 Spin';
         btn.onclick = doSpin;
       };
       document.getElementById('btn-spin-again').style.display = 'block';
